@@ -78,10 +78,137 @@ class ExpenseController extends Controller
         ]);
     }
 
-    /* ---------------------------------------------------------------------
-     | 3.  CREATE / STORE / UPDATE / DESTROY
-     |     (all your original code – unchanged)
-     * -------------------------------------------------------------------*/
-    // … everything else in the controller is identical …
+    /**
+     * Show the form for creating a new expense.
+     */
+    public function create()
+    {
+        return view('expenses.create');
+    }
 
+    /**
+     * Store a newly created expense in storage.
+     * Logs creation and clears index cache.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title'      => 'required',
+            'amount'     => 'required|numeric',
+            'date'       => 'required|date',
+            'receipt'    => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
+        ]);
+
+        $data = $request->only(['title','amount','date','category','notes']);
+        $data['user_id'] = auth()->id();
+
+        if ($request->hasFile('receipt')) {
+            $data['receipt_path'] = $request
+                ->file('receipt')
+                ->store('receipts','public');
+        }
+
+        $expense = Expense::create($data);
+
+        // Logging
+        Log::info('Expense created', [
+            'user_id'    => auth()->id(),
+            'expense_id' => $expense->id,
+            'data'       => $expense->toArray(),
+        ]);
+
+        // Clear cache so new item shows up
+        Cache::forget("expenses_user_".auth()->id());
+
+        return redirect()->route('expenses.index')
+                         ->with('success','Expense & receipt saved!');
+    }
+
+    /**
+     * Display the specified expense.
+     */
+    public function show(Expense $expense)
+    {
+        $this->authorize('view', $expense);
+        return view('expenses.show', compact('expense'));
+    }
+
+    /**
+     * Show the form for editing the specified expense.
+     */
+    public function edit(Expense $expense)
+    {
+        $this->authorize('update', $expense);
+        return view('expenses.edit', compact('expense'));
+    }
+
+    /**
+     * Update the specified expense in storage.
+     * Logs update and clears index cache.
+     */
+    public function update(Request $request, Expense $expense)
+    {
+        $this->authorize('update', $expense);
+
+        $request->validate([
+            'title'      => 'required',
+            'amount'     => 'required|numeric',
+            'date'       => 'required|date',
+            'receipt'    => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
+        ]);
+
+        $original = $expense->getOriginal();
+
+        $data = $request->only(['title','amount','date','category','notes']);
+
+        if ($request->hasFile('receipt')) {
+            // delete old
+            if ($expense->receipt_path) {
+                Storage::disk('public')->delete($expense->receipt_path);
+            }
+            $data['receipt_path'] = $request
+                ->file('receipt')
+                ->store('receipts','public');
+        }
+
+        $expense->update($data);
+
+        // Logging
+        Log::info('Expense updated', [
+            'user_id'     => auth()->id(),
+            'expense_id'  => $expense->id,
+            'before'      => $original,
+            'after'       => $expense->getChanges(),
+        ]);
+
+        // Clear cache
+        Cache::forget("expenses_user_".auth()->id());
+
+        return redirect()->route('expenses.index')
+                         ->with('success','Expense updated!');
+    }
+
+    /**
+     * Remove the specified expense from storage.
+     * Logs deletion and clears index cache.
+     */
+    public function destroy(Expense $expense)
+    {
+        $this->authorize('delete', $expense);
+
+        // Logging
+        Log::warning('Expense deleted', [
+            'user_id'    => auth()->id(),
+            'expense_id' => $expense->id,
+            'data'       => $expense->toArray(),
+        ]);
+
+        $expense->delete();
+
+        // Clear cache
+        Cache::forget("expenses_user_".auth()->id());
+
+        return redirect()->route('expenses.index')
+                         ->with('success','Expense deleted!');
+    }
 }
