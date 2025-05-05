@@ -13,7 +13,7 @@ Route::get('/', fn() => redirect('/dashboard'));
 
 // Dashboard (only for verified users)
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth','verified'])
+->middleware('auth')
     ->name('dashboard');
 
 // Authenticated routes
@@ -45,7 +45,7 @@ require __DIR__.'/auth.php';
 |--------------------------------------------------------------------------
 */
 
-// 1) Show “please verify” notice
+
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
