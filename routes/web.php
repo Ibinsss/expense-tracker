@@ -13,8 +13,8 @@ Route::get('/', function () {
 
 // Dashboard page (shows greeting + recent expenses)
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+     ->middleware('auth')
+     ->name('dashboard');
 
 // Grouped routes that require authentication
 Route::middleware(['auth'])->group(function () {
