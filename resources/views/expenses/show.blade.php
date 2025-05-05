@@ -8,42 +8,51 @@
     <p><strong>Category:</strong> {{ $expense->category }}</p>
     <p><strong>Notes:</strong> {{ $expense->notes }}</p>
 
-    @if($expense->receipt_path)
+    @if($expense->receipt_data)
         <div class="mt-6">
             <h3 class="text-lg font-semibold mb-2">Receipt</h3>
 
             @php
-                $url = asset('storage/'.$expense->receipt_path);
-                $ext = strtolower(pathinfo($expense->receipt_path, PATHINFO_EXTENSION));
+                // build a data: URI from the raw blob
+                $mime = $expense->receipt_mime;
+                $src  = 'data:' . $mime . ';base64,' . base64_encode($expense->receipt_data);
             @endphp
 
-            @if($ext === 'pdf')
+            @if($mime === 'application/pdf')
                 <div class="border rounded overflow-hidden bg-white">
                     <object
-                        data="{{ $url }}"
+                        data="{{ $src }}"
                         type="application/pdf"
-                        class="w-full h-64"  {{-- h-64 = 16rem; adjust as needed --}}
+                        class="w-full h-64"
                     >
                         <p class="p-4">
-                            Your browser doesn’t support embedded PDFs.
-                            <a href="{{ $url }}" class="text-indigo-600 underline">
+                            Your browser doesn’t support inline PDFs.
+                            <a href="{{ $src }}" class="text-indigo-600 underline">
                                 Download the PDF
                             </a>
                         </p>
                     </object>
                 </div>
-            @else
+
+            @elseif(str_starts_with($mime, 'image/'))
                 <div class="border rounded bg-white p-4">
                     <img
-                        src="{{ $url }}"
+                        src="{{ $src }}"
                         alt="Receipt for {{ $expense->title }}"
                         class="w-full max-h-96 object-contain"
                     />
                 </div>
+
+            @else
+                <p>
+                    <a href="{{ $src }}" class="text-indigo-600 underline">
+                        Download receipt file
+                    </a>
+                </p>
             @endif
 
             <p class="mt-2 text-sm">
-                <a href="{{ $url }}" target="_blank" class="text-blue-600 underline">
+                <a href="{{ $src }}" target="_blank" class="text-blue-600 underline">
                     Open original
                 </a>
             </p>

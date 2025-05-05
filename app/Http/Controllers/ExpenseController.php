@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -23,7 +22,7 @@ class ExpenseController extends Controller
         $userId   = auth()->id();
         $cacheKey = "expenses_user_{$userId}";
 
-        /* 1‑a  collection (per‑month list) --------------------------------*/
+        /* 1-a  collection (per-month list) -------------------------------*/
         $expenses = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($userId) {
             return Expense::where('user_id', $userId)
                 ->orderBy('date', 'asc')
@@ -32,11 +31,11 @@ class ExpenseController extends Controller
                 ->sortKeys();
         });
 
-        /* 1‑b  per‑month totals  (driver‑aware!) --------------------------*/
-        $driver      = DB::getDriverName();   // "mysql" | "pgsql"
-        $monthSql    = $driver === 'pgsql'
-                     ? "to_char(date, 'FMMonth YYYY')"
-                     : "DATE_FORMAT(date, '%M %Y')";
+        /* 1-b  per-month totals  (driver-aware!) --------------------------*/
+        $driver   = DB::getDriverName();   // "mysql" | "pgsql"
+        $monthSql = $driver === 'pgsql'
+                  ? "to_char(date, 'FMMonth YYYY')"
+                  : "DATE_FORMAT(date, '%M %Y')";
 
         $totals = Expense::where('user_id', $userId)
             ->selectRaw("$monthSql AS month_year, SUM(amount) AS total")
@@ -88,36 +87,32 @@ class ExpenseController extends Controller
 
     /**
      * Store a newly created expense in storage.
-     * Logs creation and clears index cache.
+     * Reads uploaded receipt into BLOB fields.
      */
     public function store(Request $request)
     {
         $request->validate([
-            'title'      => 'required',
-            'amount'     => 'required|numeric',
-            'date'       => 'required|date',
-            'receipt'    => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
+            'title'   => 'required',
+            'amount'  => 'required|numeric',
+            'date'    => 'required|date',
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
         ]);
 
-        $data = $request->only(['title','amount','date','category','notes']);
+        $data = $request->only(['title', 'amount', 'date', 'category', 'notes']);
         $data['user_id'] = auth()->id();
 
-        if ($request->hasFile('receipt')) {
-            $data['receipt_path'] = $request
-                ->file('receipt')
-                ->store('receipts','public');
+        if ($file = $request->file('receipt')) {
+            $data['receipt_data'] = file_get_contents($file->getRealPath());
+            $data['receipt_mime'] = $file->getClientMimeType();
         }
 
         $expense = Expense::create($data);
 
-        // Logging
         Log::info('Expense created', [
             'user_id'    => auth()->id(),
             'expense_id' => $expense->id,
-            'data'       => $expense->toArray(),
         ]);
 
-        // Clear cache so new item shows up
         Cache::forget("expenses_user_".auth()->id());
 
         return redirect()->route('expenses.index')
@@ -144,44 +139,33 @@ class ExpenseController extends Controller
 
     /**
      * Update the specified expense in storage.
-     * Logs update and clears index cache.
+     * If a new receipt is uploaded, overwrite the BLOB fields.
      */
     public function update(Request $request, Expense $expense)
     {
         $this->authorize('update', $expense);
 
         $request->validate([
-            'title'      => 'required',
-            'amount'     => 'required|numeric',
-            'date'       => 'required|date',
-            'receipt'    => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
+            'title'   => 'required',
+            'amount'  => 'required|numeric',
+            'date'    => 'required|date',
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
         ]);
 
-        $original = $expense->getOriginal();
+        $data = $request->only(['title', 'amount', 'date', 'category', 'notes']);
 
-        $data = $request->only(['title','amount','date','category','notes']);
-
-        if ($request->hasFile('receipt')) {
-            // delete old
-            if ($expense->receipt_path) {
-                Storage::disk('public')->delete($expense->receipt_path);
-            }
-            $data['receipt_path'] = $request
-                ->file('receipt')
-                ->store('receipts','public');
+        if ($file = $request->file('receipt')) {
+            $data['receipt_data'] = file_get_contents($file->getRealPath());
+            $data['receipt_mime'] = $file->getClientMimeType();
         }
 
         $expense->update($data);
 
-        // Logging
         Log::info('Expense updated', [
-            'user_id'     => auth()->id(),
-            'expense_id'  => $expense->id,
-            'before'      => $original,
-            'after'       => $expense->getChanges(),
+            'user_id'    => auth()->id(),
+            'expense_id' => $expense->id,
         ]);
 
-        // Clear cache
         Cache::forget("expenses_user_".auth()->id());
 
         return redirect()->route('expenses.index')
@@ -190,22 +174,18 @@ class ExpenseController extends Controller
 
     /**
      * Remove the specified expense from storage.
-     * Logs deletion and clears index cache.
      */
     public function destroy(Expense $expense)
     {
         $this->authorize('delete', $expense);
 
-        // Logging
+        $expense->delete();
+
         Log::warning('Expense deleted', [
             'user_id'    => auth()->id(),
             'expense_id' => $expense->id,
-            'data'       => $expense->toArray(),
         ]);
 
-        $expense->delete();
-
-        // Clear cache
         Cache::forget("expenses_user_".auth()->id());
 
         return redirect()->route('expenses.index')

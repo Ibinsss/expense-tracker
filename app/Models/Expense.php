@@ -16,12 +16,21 @@ class Expense extends Model
         'category',
         'notes',
         'user_id',
-        'receipt_path',
+        'receipt_data',
+        'receipt_mime',
     ];
 
-    // Relationship: an expense belongs to a user
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function getReceiptSrcAttribute(): ?string
+    {
+        if (empty($this->receipt_data) || empty($this->receipt_mime)) {
+            return null;
+        }
+
+        $b64 = base64_encode($this->receipt_data);
+        return "data:{$this->receipt_mime};base64,{$b64}";
     }
 }
