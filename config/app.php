@@ -71,7 +71,7 @@ return [
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class, // ✅ Required for policies like authorize()
         App\Providers\RouteServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
+       // App\Providers\TelescopeServiceProvider::class,
     ],
 
     'aliases' => [
