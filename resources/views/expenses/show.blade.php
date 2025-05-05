@@ -2,6 +2,7 @@
 
 @section('content')
     <h2 class="text-xl font-bold mb-4">{{ $expense->title }}</h2>
+
     <p><strong>Amount:</strong> RM {{ number_format($expense->amount, 2) }}</p>
     <p><strong>Date:</strong> {{ $expense->date }}</p>
     <p><strong>Category:</strong> {{ $expense->category }}</p>
@@ -18,10 +19,10 @@
 
             @if($ext === 'pdf')
                 <div class="border rounded overflow-hidden bg-white">
-                    <object 
-                        data="{{ $url }}" 
-                        type="application/pdf" 
-                        class="w-full h-64"  {{-- adjust h-64 (256px) as needed --}}
+                    <object
+                        data="{{ $url }}"
+                        type="application/pdf"
+                        class="w-full h-64"  {{-- h-64 = 16rem; adjust as needed --}}
                     >
                         <p class="p-4">
                             Your browser doesn’t support embedded PDFs.
@@ -32,11 +33,11 @@
                     </object>
                 </div>
             @else
-                <div class="border rounded bg-white p-2">
-                    <img 
-                        src="{{ $url }}" 
-                        alt="Receipt for {{ $expense->title }}" 
-                        class="w-full max-h-96 object-contain" 
+                <div class="border rounded bg-white p-4">
+                    <img
+                        src="{{ $url }}"
+                        alt="Receipt for {{ $expense->title }}"
+                        class="w-full max-h-96 object-contain"
                     />
                 </div>
             @endif
@@ -50,13 +51,11 @@
     @endif
 
     <div class="mt-6 flex space-x-4">
-        <a href="{{ route('expenses.edit', $expense) }}" 
-           class="btn btn-outline">
-           Edit
+        <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-outline">
+            Edit
         </a>
-        <a href="{{ route('expenses.index') }}" 
-           class="btn btn-outline">
-           Back
+        <a href="{{ route('expenses.index') }}" class="btn btn-outline">
+            Back
         </a>
     </div>
 @endsection

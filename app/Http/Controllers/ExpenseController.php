@@ -96,9 +96,10 @@ class ExpenseController extends Controller
         $data['user_id'] = auth()->id();
 
         if ($request->hasFile('receipt')) {
-            $data['receipt_path'] = $request
-                ->file('receipt')
-                ->store('receipts','public');
+            // store on whatever disk is default (public locally, s3 on Heroku)
+            $path = $request->file('receipt')
+                            ->store('receipts', config('filesystems.default'));
+            $data['receipt_path'] = $path;
         }
 
         $expense = Expense::create($data);
