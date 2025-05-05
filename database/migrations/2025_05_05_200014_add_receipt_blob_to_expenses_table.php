@@ -6,13 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
-    {
-        Schema::table('expenses', function (Blueprint $table) {
-            $table->longBlob('receipt_data')->nullable();
-            $table->string('receipt_mime')->nullable();
-        });
-    }
-
+{
+    Schema::table('expenses', function (Blueprint $table) {
+        $table->longBlob('receipt_blob')->nullable();
+    });
+}
     public function down(): void
     {
         Schema::table('expenses', function (Blueprint $table) {
