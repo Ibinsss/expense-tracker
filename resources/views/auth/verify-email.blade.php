@@ -1,31 +1,25 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+@extends('expenses.layout') {{-- or your app’s base layout --}}
+@section('content')
+  <div class="max-w-md mx-auto p-6 bg-white rounded shadow">
+    <h1 class="text-xl font-bold mb-4">Verify Your Email Address</h1>
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
+    @if (session('message'))
+      <div class="mb-4 text-green-600">
+        {{ session('message') }}
+      </div>
     @endif
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+    <p>
+      Before proceeding, please check your email for a verification link.
+      If you did not receive the email,
+    </p>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                {{ __('Log Out') }}
-            </button>
-        </form>
-    </div>
-</x-guest-layout>
+    <form method="POST" action="{{ route('verification.send') }}" class="mt-4">
+      @csrf
+      <button type="submit"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">
+        Click here to request another
+      </button>
+    </form>
+  </div>
+@endsection

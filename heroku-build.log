@@ -1,0 +1,231 @@
+remote: Updated 135 paths from bd09af4        
+remote: Compressing source files... done.        
+remote: Building source:        
+remote: 
+remote: -----> Building on the Heroku-24 stack        
+remote: -----> Using buildpack: heroku/php        
+remote: -----> PHP app detected        
+remote: -----> Bootstrapping...        
+remote: -----> Preparing platform package installation...        
+remote: -----> Installing platform packages...        
+remote:        - php (8.4.6)        
+remote:        - apache (2.4.63)        
+remote:        - composer (2.8.8)        
+remote:        - nginx (1.26.3)        
+remote: [1;33m       NOTICE: [0mdetected userland polyfill packages for PHP extensions        
+remote: [1;33m       NOTICE: [0mnow attempting to install native extension packages        
+remote:        Installing extensions provided by symfony/polyfill-mbstring:        
+remote:        - ext-mbstring...         remote:        - ext-mbstring (bundled with php)        
+remote:        Installing extensions provided by symfony/polyfill-ctype:        
+remote:        - ext-ctype...         remote:        - ext-ctype (already enabled)        
+remote: -----> Installing dependencies...        
+remote:        Composer version 2.8.8 2025-04-04 16:56:46        
+remote:        Installing dependencies from lock file        
+remote:        Verifying lock file contents can be installed on current platform.        
+remote:        Package operations: 75 installs, 0 updates, 0 removals        
+remote:          - Downloading doctrine/inflector (2.0.10)        
+remote:          - Downloading doctrine/lexer (3.0.1)        
+remote:          - Downloading symfony/polyfill-ctype (v1.31.0)        
+remote:          - Downloading webmozart/assert (1.11.0)        
+remote:          - Downloading dragonmantank/cron-expression (v3.4.0)        
+remote:          - Downloading symfony/polyfill-php83 (v1.31.0)        
+remote:          - Downloading symfony/polyfill-mbstring (v1.31.0)        
+remote:          - Downloading symfony/deprecation-contracts (v3.5.1)        
+remote:          - Downloading symfony/http-foundation (v7.2.5)        
+remote:          - Downloading fruitcake/php-cors (v1.3.0)        
+remote:          - Downloading psr/http-message (2.0)        
+remote:          - Downloading psr/http-client (1.0.3)        
+remote:          - Downloading ralouphie/getallheaders (3.0.3)        
+remote:          - Downloading psr/http-factory (1.1.0)        
+remote:          - Downloading guzzlehttp/psr7 (2.7.1)        
+remote:          - Downloading guzzlehttp/promises (2.2.0)        
+remote:          - Downloading guzzlehttp/guzzle (7.9.3)        
+remote:          - Downloading symfony/polyfill-php80 (v1.31.0)        
+remote:          - Downloading guzzlehttp/uri-template (v1.0.4)        
+remote:          - Downloading symfony/polyfill-intl-normalizer (v1.31.0)        
+remote:          - Downloading symfony/polyfill-intl-grapheme (v1.31.0)        
+remote:          - Downloading symfony/string (v7.2.0)        
+remote:          - Downloading psr/container (2.0.2)        
+remote:          - Downloading symfony/service-contracts (v3.5.1)        
+remote:          - Downloading symfony/console (v7.2.5)        
+remote:          - Downloading laravel/prompts (v0.3.5)        
+remote:          - Downloading laravel/serializable-closure (v2.0.4)        
+remote:          - Downloading symfony/var-dumper (v7.2.3)        
+remote:          - Downloading nikic/php-parser (v5.4.0)        
+remote:          - Downloading psy/psysh (v0.12.8)        
+remote:          - Downloading voku/portable-ascii (2.0.3)        
+remote:          - Downloading phpoption/phpoption (1.9.3)        
+remote:          - Downloading graham-campbell/result-type (v1.1.3)        
+remote:          - Downloading vlucas/phpdotenv (v5.6.2)        
+remote:          - Downloading symfony/css-selector (v7.2.0)        
+remote:          - Downloading tijsverkoyen/css-to-inline-styles (v2.3.0)        
+remote:          - Downloading symfony/polyfill-uuid (v1.31.0)        
+remote:          - Downloading symfony/uid (v7.2.0)        
+remote:          - Downloading symfony/routing (v7.2.3)        
+remote:          - Downloading symfony/process (v7.2.5)        
+remote:          - Downloading symfony/polyfill-intl-idn (v1.31.0)        
+remote:          - Downloading symfony/mime (v7.2.4)        
+remote:          - Downloading psr/event-dispatcher (1.0.0)        
+remote:          - Downloading symfony/event-dispatcher-contracts (v3.5.1)        
+remote:          - Downloading symfony/event-dispatcher (v7.2.0)        
+remote:          - Downloading psr/log (3.0.2)        
+remote:          - Downloading egulias/email-validator (4.0.4)        
+remote:          - Downloading symfony/mailer (v7.2.3)        
+remote:          - Downloading symfony/error-handler (v7.2.5)        
+remote:          - Downloading symfony/http-kernel (v7.2.5)        
+remote:          - Downloading symfony/finder (v7.2.2)        
+remote:          - Downloading ramsey/collection (2.1.1)        
+remote:          - Downloading brick/math (0.12.3)        
+remote:          - Downloading ramsey/uuid (4.7.6)        
+remote:          - Downloading psr/simple-cache (3.0.0)        
+remote:          - Downloading nunomaduro/termwind (v2.3.0)        
+remote:          - Downloading symfony/translation-contracts (v3.5.1)        
+remote:          - Downloading symfony/translation (v7.2.4)        
+remote:          - Downloading psr/clock (1.0.0)        
+remote:          - Downloading symfony/clock (v7.2.0)        
+remote:          - Downloading carbonphp/carbon-doctrine-types (3.2.0)        
+remote:          - Downloading nesbot/carbon (3.9.0)        
+remote:          - Downloading monolog/monolog (3.9.0)        
+remote:          - Downloading league/uri-interfaces (7.5.0)        
+remote:          - Downloading league/uri (7.5.1)        
+remote:          - Downloading league/mime-type-detection (1.16.0)        
+remote:          - Downloading league/flysystem-local (3.29.0)        
+remote:          - Downloading league/flysystem (3.29.1)        
+remote:          - Downloading nette/utils (v4.0.6)        
+remote:          - Downloading nette/schema (v1.3.2)        
+remote:          - Downloading dflydev/dot-access-data (v3.0.3)        
+remote:          - Downloading league/config (v1.2.0)        
+remote:          - Downloading league/commonmark (2.6.2)        
+remote:          - Downloading laravel/framework (v12.11.1)        
+remote:          - Downloading laravel/tinker (v2.10.1)        
+remote:          - Installing doctrine/inflector (2.0.10): Extracting archive        
+remote:          - Installing doctrine/lexer (3.0.1): Extracting archive        
+remote:          - Installing symfony/polyfill-ctype (v1.31.0): Extracting archive        
+remote:          - Installing webmozart/assert (1.11.0): Extracting archive        
+remote:          - Installing dragonmantank/cron-expression (v3.4.0): Extracting archive        
+remote:          - Installing symfony/polyfill-php83 (v1.31.0): Extracting archive        
+remote:          - Installing symfony/polyfill-mbstring (v1.31.0): Extracting archive        
+remote:          - Installing symfony/deprecation-contracts (v3.5.1): Extracting archive        
+remote:          - Installing symfony/http-foundation (v7.2.5): Extracting archive        
+remote:          - Installing fruitcake/php-cors (v1.3.0): Extracting archive        
+remote:          - Installing psr/http-message (2.0): Extracting archive        
+remote:          - Installing psr/http-client (1.0.3): Extracting archive        
+remote:          - Installing ralouphie/getallheaders (3.0.3): Extracting archive        
+remote:          - Installing psr/http-factory (1.1.0): Extracting archive        
+remote:          - Installing guzzlehttp/psr7 (2.7.1): Extracting archive        
+remote:          - Installing guzzlehttp/promises (2.2.0): Extracting archive        
+remote:          - Installing guzzlehttp/guzzle (7.9.3): Extracting archive        
+remote:          - Installing symfony/polyfill-php80 (v1.31.0): Extracting archive        
+remote:          - Installing guzzlehttp/uri-template (v1.0.4): Extracting archive        
+remote:          - Installing symfony/polyfill-intl-normalizer (v1.31.0): Extracting archive        
+remote:          - Installing symfony/polyfill-intl-grapheme (v1.31.0): Extracting archive        
+remote:          - Installing symfony/string (v7.2.0): Extracting archive        
+remote:          - Installing psr/container (2.0.2): Extracting archive        
+remote:          - Installing symfony/service-contracts (v3.5.1): Extracting archive        
+remote:          - Installing symfony/console (v7.2.5): Extracting archive        
+remote:          - Installing laravel/prompts (v0.3.5): Extracting archive        
+remote:          - Installing laravel/serializable-closure (v2.0.4): Extracting archive        
+remote:          - Installing symfony/var-dumper (v7.2.3): Extracting archive        
+remote:          - Installing nikic/php-parser (v5.4.0): Extracting archive        
+remote:          - Installing psy/psysh (v0.12.8): Extracting archive        
+remote:          - Installing voku/portable-ascii (2.0.3): Extracting archive        
+remote:          - Installing phpoption/phpoption (1.9.3): Extracting archive        
+remote:          - Installing graham-campbell/result-type (v1.1.3): Extracting archive        
+remote:          - Installing vlucas/phpdotenv (v5.6.2): Extracting archive        
+remote:          - Installing symfony/css-selector (v7.2.0): Extracting archive        
+remote:          - Installing tijsverkoyen/css-to-inline-styles (v2.3.0): Extracting archive        
+remote:          - Installing symfony/polyfill-uuid (v1.31.0): Extracting archive        
+remote:          - Installing symfony/uid (v7.2.0): Extracting archive        
+remote:          - Installing symfony/routing (v7.2.3): Extracting archive        
+remote:          - Installing symfony/process (v7.2.5): Extracting archive        
+remote:          - Installing symfony/polyfill-intl-idn (v1.31.0): Extracting archive        
+remote:          - Installing symfony/mime (v7.2.4): Extracting archive        
+remote:          - Installing psr/event-dispatcher (1.0.0): Extracting archive        
+remote:          - Installing symfony/event-dispatcher-contracts (v3.5.1): Extracting archive        
+remote:          - Installing symfony/event-dispatcher (v7.2.0): Extracting archive        
+remote:          - Installing psr/log (3.0.2): Extracting archive        
+remote:          - Installing egulias/email-validator (4.0.4): Extracting archive        
+remote:          - Installing symfony/mailer (v7.2.3): Extracting archive        
+remote:          - Installing symfony/error-handler (v7.2.5): Extracting archive        
+remote:          - Installing symfony/http-kernel (v7.2.5): Extracting archive        
+remote:          - Installing symfony/finder (v7.2.2): Extracting archive        
+remote:          - Installing ramsey/collection (2.1.1): Extracting archive        
+remote:          - Installing brick/math (0.12.3): Extracting archive        
+remote:          - Installing ramsey/uuid (4.7.6): Extracting archive        
+remote:          - Installing psr/simple-cache (3.0.0): Extracting archive        
+remote:          - Installing nunomaduro/termwind (v2.3.0): Extracting archive        
+remote:          - Installing symfony/translation-contracts (v3.5.1): Extracting archive        
+remote:          - Installing symfony/translation (v7.2.4): Extracting archive        
+remote:          - Installing psr/clock (1.0.0): Extracting archive        
+remote:          - Installing symfony/clock (v7.2.0): Extracting archive        
+remote:          - Installing carbonphp/carbon-doctrine-types (3.2.0): Extracting archive        
+remote:          - Installing nesbot/carbon (3.9.0): Extracting archive        
+remote:          - Installing monolog/monolog (3.9.0): Extracting archive        
+remote:          - Installing league/uri-interfaces (7.5.0): Extracting archive        
+remote:          - Installing league/uri (7.5.1): Extracting archive        
+remote:          - Installing league/mime-type-detection (1.16.0): Extracting archive        
+remote:          - Installing league/flysystem-local (3.29.0): Extracting archive        
+remote:          - Installing league/flysystem (3.29.1): Extracting archive        
+remote:          - Installing nette/utils (v4.0.6): Extracting archive        
+remote:          - Installing nette/schema (v1.3.2): Extracting archive        
+remote:          - Installing dflydev/dot-access-data (v3.0.3): Extracting archive        
+remote:          - Installing league/config (v1.2.0): Extracting archive        
+remote:          - Installing league/commonmark (2.6.2): Extracting archive        
+remote:          - Installing laravel/framework (v12.11.1): Extracting archive        
+remote:          - Installing laravel/tinker (v2.10.1): Extracting archive        
+remote:        Generating optimized autoload files        
+remote:        > Illuminate\Foundation\ComposerScripts::postAutoloadDump        
+remote:        > @php artisan package:discover --ansi        
+remote:                
+remote:        In TelescopeServiceProvider.php line 10:        
+remote:                                                                                           
+remote:          Class "Laravel\Telescope\TelescopeApplicationServiceProvider" not found          
+remote:                                                                                           
+remote:                
+remote:        Script @php artisan package:discover --ansi handling the post-autoload-dump event returned with error code 1        
+remote: [1;33m !     WARNING: A post-autoload-dump script terminated with an error        
+remote: [0m[1;31m        
+remote:  !     ERROR: Dependency installation failed!        
+remote:  !             
+remote:  !     The 'composer install' process failed with an error. The cause        
+remote:  !     may be the download or installation of packages, or a pre- or        
+remote:  !     post-install hook (e.g. a 'post-install-cmd' item in 'scripts')        
+remote:  !     in your 'composer.json'.        
+remote:  !             
+remote:  !     Typical error cases are out-of-date or missing parts of code,        
+remote:  !     timeouts when making external connections, or memory limits.        
+remote:  !             
+remote:  !     Check the above error output closely to determine the cause of        
+remote:  !     the problem, ensure the code you're pushing is functioning        
+remote:  !     properly, and that all local changes are committed correctly.        
+remote:  !             
+remote:  !     For more information on builds for PHP on Heroku, refer to        
+remote:  !     https://devcenter.heroku.com/articles/php-support        
+remote:  !             
+remote:  !     [1;33mREMINDER:[1;31m the following [1;33mwarnings[1;31m were emitted during the build;        
+remote:  !     check the details above, as they may be related to this error:        
+remote:  !     [1;33m-[1;31m A post-autoload-dump script terminated with an error        
+remote: [0m        
+remote:  !     Push rejected, failed to compile PHP app.        
+remote: 
+remote:  !     Push failed        
+remote:  !        
+remote:  ! ## Warning - The same version of this code has already been built: 4382cc0a4e44fe30d12022cf7c27a99a5d229e36        
+remote:  !        
+remote:  ! We have detected that you have triggered a build from source code with version 4382cc0a4e44fe30d12022cf7c27a99a5d229e36        
+remote:  ! at least twice. One common cause of this behavior is attempting to deploy code from a different branch.        
+remote:  !        
+remote:  ! If you are developing on a branch and deploying via git you must run:        
+remote:  !        
+remote:  !     git push heroku <branchname>:main        
+remote:  !        
+remote:  ! This article goes into details on the behavior:        
+remote:  !   https://devcenter.heroku.com/articles/duplicate-build-version        
+remote: 
+remote: Verifying deploy...        
+remote: 
+remote: !	Push rejected to peaceful-bayou-19969.        
+remote: 
+To https://git.heroku.com/peaceful-bayou-19969.git
+ ! [remote rejected] main -> main (pre-receive hook declined)
+error: failed to push some refs to 'https://git.heroku.com/peaceful-bayou-19969.git'

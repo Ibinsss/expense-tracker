@@ -25,7 +25,7 @@
                     </div>
                 </div>
 
-                {{--}}
+              
                 <div class="flex justify-center gap-4 mt-6 flex-wrap">
                     <a href="{{ route('expenses.index') }}"
                        class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded shadow">
@@ -36,7 +36,7 @@
                             class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded shadow">
                         📧 Email this breakdown
                     </button> 
-                </div> --}}
+                </div> 
             </div>
 
             <!-- Table Breakdown -->
