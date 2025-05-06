@@ -86,12 +86,13 @@ class ExpenseController extends Controller
         $convertedBreakdown = $categoryBreakdown
             ->map(fn($total) => $fx->convert($total, $currency));
 
-        return view('expenses.breakdown', [
-            'month'                => $month,
-            'categoryBreakdown'    => $categoryBreakdown,
-            'convertedBreakdown'   => $convertedBreakdown,
-            'currency'             => $currency,
-        ]);
+            return view('expenses.breakdown', [
+                'month'              => $month,
+                'categoryBreakdown'  => $categoryBreakdown,
+                'convertedBreakdown' => $convertedBreakdown,
+                'convertedTotals'    => $convertedBreakdown,
+                'currency'           => $currency,
+            ]);
     }
 
     public function create()
