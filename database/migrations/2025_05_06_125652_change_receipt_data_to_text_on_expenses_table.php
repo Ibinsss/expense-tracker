@@ -9,14 +9,11 @@ class ChangeReceiptDataToTextOnExpensesTable extends Migration
     public function up(): void
 {
     Schema::table('expenses', function (Blueprint $table) {
-        // this line is failing because there's no "receipt_blob" column in Postgres:
-        $table->renameColumn('receipt_data_old', 'receipt_data');
-        });
-
-        Schema::table('expenses', function (Blueprint $table) {
-            // recreate as text
-            $table->text('receipt_data')->after('receipt_path');
-        });
+        // ONLY change the type of the existing receipt_data column:
+        $table->text('receipt_data')
+              ->nullable()
+              ->change();
+    });
     }
 
     public function down()
