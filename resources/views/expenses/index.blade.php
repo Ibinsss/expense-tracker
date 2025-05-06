@@ -4,8 +4,7 @@
         <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">
           {{ __('My Expenses') }}
         </h2>
-        <a href="{{ route('expenses.create') }}"
-           class="btn btn-primary btn-sm">
+        <a href="{{ route('expenses.create') }}" class="btn btn-primary btn-sm">
           + Add Expense
         </a>
       </div>
@@ -26,19 +25,20 @@
           <section class="space-y-4">
   
             {{-- Month Header --}}
-            <div class="bg-indigo-100 dark:bg-gray-800 rounded-lg px-5 py-3 flex flex-col sm:flex-row sm:justify-between sm:items-center">
+            <div class="bg-indigo-100 dark:bg-gray-800 rounded-lg px-5 py-3 
+                        flex flex-col sm:flex-row sm:justify-between sm:items-center">
               <span class="text-lg font-medium text-indigo-800 dark:text-indigo-200">
                 {{ $month }}
               </span>
-              <div class="mt-2 sm:mt-0 flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                <a href="{{ route('expenses.breakdown', ['month' => $month]) }}"
-                   class="link">
+              <div class="mt-2 sm:mt-0 flex items-center space-x-4 text-sm 
+                          text-gray-600 dark:text-gray-400">
+                <a href="{{ route('expenses.breakdown',['month'=>$month]) }}" class="link">
                   View More
                 </a>
                 <span>
-                  Total: 
+                  Total:
                   <strong>RM {{ number_format($rmTotals[$month] ?? 0, 2) }}</strong>
-                  → 
+                  &nbsp;→&nbsp;
                   <strong>{{ number_format($convertedTotals[$month] ?? 0, 2) }} {{ $currency }}</strong>
                 </span>
               </div>
@@ -46,25 +46,25 @@
   
             {{-- Expenses Grid --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              @foreach ($monthlyExpenses as $expense)
+              @foreach($monthlyExpenses as $expense)
                 <div class="card hover:shadow-lg transition-shadow">
                   <div class="card-body flex flex-col justify-between h-full">
-                    
-                    {{-- Title --}}
                     <div>
                       <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
                         {{ $expense->title }}
                       </h4>
-                      
-                      {{-- Amounts, Date & Category --}}
                       <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        <span class="font-medium">RM {{ number_format($expense->amount, 2) }}</span>
-                        <span class="ml-1 text-gray-800 dark:text-gray-100">
-                          → {{ number_format($expense->converted_amount, 2) }} {{ $currency }}
+                        {{-- RM and converted amount --}}
+                        <span class="font-medium">RM {{ number_format($expense->amount,2) }}</span>
+                        &nbsp;→&nbsp;
+                        <span class="text-gray-800 dark:text-gray-100">
+                          {{ number_format($expense->converted_amount,2) }} {{ $currency }}
                         </span>
-                        • {{ \Carbon\Carbon::parse($expense->date)->format('d M Y') }} • {{ $expense->category }}
+                        &nbsp;•&nbsp;
+                        {{-- date & category --}}
+                        {{ \Carbon\Carbon::parse($expense->date)->format('d M Y') }}
+                        &nbsp;•&nbsp;{{ $expense->category }}
                       </p>
-  
                       @if($expense->notes)
                         <p class="mt-2 text-sm italic text-gray-500 dark:text-gray-300">
                           {{ $expense->notes }}
@@ -74,25 +74,19 @@
   
                     {{-- Actions --}}
                     <div class="mt-4 flex flex-wrap gap-2">
-                      <a href="{{ route('expenses.edit', $expense->id) }}"
-                         class="btn btn-outline btn-sm">
-                        Edit
-                      </a>
-                      <a href="{{ route('expenses.show', $expense->id) }}"
-                         class="btn btn-outline btn-sm">
-                        View
-                      </a>
-                      <form action="{{ route('expenses.destroy', $expense->id) }}"
-                            method="POST"
-                            onsubmit="return confirm('Delete this expense?');">
+                      <a href="{{ route('expenses.edit',$expense->id) }}" 
+                         class="btn btn-outline btn-sm">Edit</a>
+                      <a href="{{ route('expenses.show',$expense->id) }}" 
+                         class="btn btn-outline btn-sm">View</a>
+                      <form action="{{ route('expenses.destroy',$expense->id) }}" 
+                            method="POST" onsubmit="return confirm('Delete this expense?');">
                         @csrf @method('DELETE')
-                        <button type="submit"
+                        <button type="submit" 
                                 class="btn btn-outline btn-sm text-red-600 dark:text-red-400">
                           Delete
                         </button>
                       </form>
                     </div>
-  
                   </div>
                 </div>
               @endforeach
