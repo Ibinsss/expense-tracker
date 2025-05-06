@@ -72,21 +72,36 @@ class ExpenseBreakdownController extends Controller
      |  A.  Browser breakdown page  (/expenses/breakdown/{month})
      * --------------------------------------------------------*/
     public function show(string $month)
-    {
-        [$start, $end] = $this->monthBounds($month);
+{
+    [$start, $end] = $this->monthBounds($month);
 
-        $expenses = Expense::where('user_id', Auth::id())
-                           ->whereBetween('date', [$start, $end])
-                           ->get();
+    $user     = Auth::user();
+    $currency = $user->currency;
 
-        $categoryTotals = $expenses->groupBy('category')
-                                   ->map->sum('amount');
+    // Fetch expenses within the month
+    $expenses = Expense::where('user_id', $user->id)
+                       ->whereBetween('date', [$start, $end])
+                       ->get();
 
-        return view('expenses.breakdown', [
-            'month'          => $month,
-            'categoryTotals' => $categoryTotals,
-        ]);
-    }
+    // RM totals by category
+    $categoryBreakdown = $expenses->groupBy('category')
+                                  ->map->sum('amount');
+
+    // Converted totals
+    $convertedBreakdown = $categoryBreakdown->map(function ($amount) use ($currency) {
+        return app(\App\Services\ExchangeRate::class)->convert($amount, $currency);
+    });
+
+    return view('expenses.breakdown', [
+        'month'              => $month,
+        'categoryBreakdown'  => $categoryBreakdown,
+        'convertedBreakdown' => $convertedBreakdown,
+        'currency'           => $currency,
+        'categoryTotals'     => $categoryBreakdown,
+        'convertedTotals'    => $convertedBreakdown,
+    ]);
+}
+
 
     /* ---------------------------------------------------------
      |  B.  SendGrid e‑mail POST  (/expenses/breakdown/{month}/email)

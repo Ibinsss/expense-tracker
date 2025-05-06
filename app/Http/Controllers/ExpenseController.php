@@ -69,30 +69,32 @@ class ExpenseController extends Controller
     {
         $user     = auth()->user();
         $currency = $user->currency;
-
+    
         // Parse "May 2025" → [2025-05-01, 2025-05-31]
         $dateObj = Carbon::createFromFormat('F Y', $month);
         $start   = $dateObj->startOfMonth();
         $end     = $dateObj->endOfMonth();
-
+    
         // 1) Raw RM totals by category
         $categoryBreakdown = Expense::where('user_id', $user->id)
             ->whereBetween('date', [$start, $end])
             ->select('category', DB::raw('SUM(amount) as total'))
             ->groupBy('category')
             ->pluck('total', 'category');
-
+    
         // 2) Converted totals
         $convertedBreakdown = $categoryBreakdown
             ->map(fn($total) => $fx->convert($total, $currency));
-
+    
             return view('expenses.breakdown', [
                 'month'              => $month,
                 'categoryBreakdown'  => $categoryBreakdown,
                 'convertedBreakdown' => $convertedBreakdown,
-                'convertedTotals'    => $convertedBreakdown,
                 'currency'           => $currency,
+                'categoryTotals'     => $categoryBreakdown, 
+                'convertedTotals'    => $convertedBreakdown 
             ]);
+            
     }
 
     public function create()

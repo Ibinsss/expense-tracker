@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     // Monthly breakdown pages
     Route::get( '/expenses/month/{month}',        [ExpenseController::class,          'showMonthlyBreakdown'])
          ->name('expenses.breakdown');
-    Route::get( '/expenses/breakdown/{month}',    [ExpenseBreakdownController::class, 'show'])
+         Route::get( '/expenses/breakdown/{month}',    [ExpenseBreakdownController::class, 'show'])
          ->name('expenses.breakdown');
     Route::post('/expenses/breakdown/{month}/email',[ExpenseBreakdownController::class,'email'])
          ->name('expenses.breakdown.email');
