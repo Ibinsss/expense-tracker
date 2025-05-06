@@ -1,41 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ========== Container ========== */
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8;
+}
+
 /* ========== Global Base Styles ========== */
+:root {
+  --font-sans: 'Figtree', sans-serif;
+}
 
 body {
-    @apply bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100;
-    font-family: 'Figtree', sans-serif;
+  @apply bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans leading-relaxed;
 }
 
-/* Headings */
-h1, h2, h3, h4 {
-    @apply font-semibold text-gray-800 dark:text-gray-100;
+/* ========== Headings ========== */
+h1 {
+  @apply text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight my-6;
+}
+h2 {
+  @apply text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight my-5;
+}
+h3 {
+  @apply text-xl sm:text-2xl font-semibold tracking-tight my-4;
+}
+h4 {
+  @apply text-lg sm:text-xl font-semibold tracking-tight my-3;
 }
 
-/* Buttons */
+/* ========== Paragraphs & Links ========== */
+p {
+  @apply mb-4;
+}
+a.link {
+  @apply text-indigo-600 dark:text-indigo-400 hover:underline;
+}
+
+/* ========== Buttons ========== */
 .btn {
-    @apply inline-block px-4 py-2 rounded font-medium text-sm transition duration-150;
+  @apply inline-flex items-center justify-center rounded-md font-medium transition duration-150 ease-in-out;
+}
+.btn-sm {
+  @apply px-3 py-1 text-sm;
+}
+.btn {
+  @apply px-4 py-2 text-base;
+}
+.btn-lg {
+  @apply px-6 py-3 text-lg;
 }
 
 .btn-primary {
-    @apply bg-indigo-600 text-white hover:bg-indigo-700;
+  @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
 }
-
 .btn-danger {
-    @apply bg-red-500 text-white hover:bg-red-600;
+  @apply bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2;
 }
-
 .btn-outline {
-    @apply border border-gray-300 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700;
+  @apply border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700;
 }
 
-/* Cards */
+/* ========== Cards ========== */
 .card {
-    @apply bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6;
+  @apply bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden;
+}
+.card-body {
+  @apply p-4 sm:p-6;
 }
 
-/* Links */
-.link {
-    @apply text-indigo-600 hover:underline;
+/* ========== Responsive Grid Helper ========== */
+.grid-responsive {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
 }

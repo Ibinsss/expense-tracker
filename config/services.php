@@ -37,5 +37,8 @@ return [
    'sendgrid' => [
   'key' => env('SENDGRID_KEY'),
 ],
+'exchangerate' => [
+  'key' => env('EXCHANGE_RATE_API_KEY'),
+],
 
 ];

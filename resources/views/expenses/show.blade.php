@@ -1,82 +1,108 @@
-
-@extends('expenses.layout')
-
-@section('content')
-    <h2 class="text-xl font-bold mb-4">{{ $expense->title }}</h2>
-
-    <p><strong>Amount:</strong> RM {{ number_format($expense->amount, 2) }}</p>
-    <p><strong>Date:</strong>   {{ $expense->date }}</p>
-    <p><strong>Category:</strong> {{ $expense->category }}</p>
-    <p><strong>Notes:</strong>    {{ $expense->notes ?: '—' }}</p>
-
-    @php
-        use Illuminate\Support\Facades\Storage;
-
-        // 1. Where is the receipt stored?
-        $hasFile = filled($expense->receipt_path);
-        $hasBlob = filled($expense->receipt_src);
-
-        $src = $hasFile
-             ? Storage::disk('public')->url($expense->receipt_path)
-             : ($hasBlob ? $expense->receipt_src : null);
-
-        // 2. Work out if it’s a PDF or an image
-        $ext = null;
-
-        if ($hasFile) {
-            $ext = strtolower(pathinfo($expense->receipt_path, PATHINFO_EXTENSION));
-        } elseif ($hasBlob && preg_match('#^data:([^;]+)#', $src, $m)) {
-            $mime = $m[1];
-            $ext  = str_contains($mime, 'pdf') ? 'pdf' : 'img';
-        }
-    @endphp
-
-    @if ($src)
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold mb-2">Receipt</h3>
-
-            {{-- PDF vs. image --}}
-            @if ($ext === 'pdf')
-                <div class="border rounded overflow-hidden bg-white">
+<x-app-layout>
+    <x-slot name="header">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight leading-tight">
+        {{ $expense->title }}
+      </h2>
+    </x-slot>
+  
+    <main class="py-8">
+      <div class="container space-y-8">
+  
+        {{-- Expense Details --}}
+        <div class="card max-w-2xl mx-auto">
+          <div class="card-body space-y-6">
+  
+            {{-- Basic Info --}}
+            <div class="space-y-2">
+              <p>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Amount:</span>
+                <span class="text-gray-800 dark:text-gray-100">RM {{ number_format($expense->amount, 2) }}</span>
+              </p>
+              <p>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Date:</span>
+                <span class="text-gray-800 dark:text-gray-100">{{ $expense->date }}</span>
+              </p>
+              <p>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Category:</span>
+                <span class="text-gray-800 dark:text-gray-100">{{ $expense->category }}</span>
+              </p>
+              <p>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Notes:</span>
+                <span class="text-gray-800 dark:text-gray-100">{{ $expense->notes ?: '—' }}</span>
+              </p>
+            </div>
+  
+            {{-- Receipt Preview Logic --}}
+            @php
+              $disk    = app()->environment('production') ? 's3' : 'public';
+              $hasFile = filled($expense->receipt_path);
+              $hasBlob = filled($expense->receipt_src);
+  
+              $src = $hasFile
+                   ? \Illuminate\Support\Facades\Storage::disk($disk)->url($expense->receipt_path)
+                   : ($hasBlob ? $expense->receipt_src : null);
+  
+              $ext = null;
+              if ($hasFile) {
+                  $ext = strtolower(pathinfo($expense->receipt_path, PATHINFO_EXTENSION));
+              } elseif ($hasBlob && preg_match('#^data:([^;]+)#', $src, $m)) {
+                  $ext = str_contains($m[1], 'pdf') ? 'pdf' : 'img';
+              }
+            @endphp
+  
+            @if($src)
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                  Receipt
+                </h3>
+  
+                @if($ext === 'pdf')
+                  <div class="border rounded overflow-hidden bg-white dark:bg-gray-900">
                     <object data="{{ $src }}"
                             type="application/pdf"
                             class="w-full h-64 sm:h-80">
-                        <p class="p-4">
-                            Your browser can’t display embedded PDFs.
-                            <a href="{{ $src }}" class="underline text-indigo-600"
-                               {{ $hasFile ? 'target=_blank' : '' }}>
-                                Download file
-                            </a>
-                        </p>
+                      <p class="p-4 text-gray-600 dark:text-gray-400">
+                        Cannot preview PDF.
+                        <a href="{{ $src }}"
+                           class="link"
+                           @if($hasFile) target="_blank" @endif>
+                          Download
+                        </a>
+                      </p>
                     </object>
-                </div>
-            @else
-                <div class="border rounded bg-white p-2">
+                  </div>
+                @else
+                  <div class="border rounded bg-white dark:bg-gray-900 p-2 flex justify-center">
                     <img src="{{ $src }}"
                          alt="Receipt for {{ $expense->title }}"
-                         class="w-full max-h-96 object-contain" />
-                </div>
-            @endif
-
-            {{-- direct link to file (only when it’s actually a file) --}}
-            @if ($hasFile)
-                <p class="mt-2 text-sm">
-                    <a href="{{ $src }}" target="_blank"
-                       class="underline text-blue-600">
-                       Open original
+                         class="max-h-80 object-contain" />
+                  </div>
+                @endif
+  
+                @if($hasFile)
+                  <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    <a href="{{ $src }}" target="_blank" class="link">
+                      Open original
                     </a>
-                </p>
+                  </p>
+                @endif
+              </div>
             @endif
+  
+            {{-- Actions --}}
+            <div class="flex flex-wrap justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-outline btn-sm">
+                Edit
+              </a>
+              <a href="{{ route('expenses.index') }}" class="btn btn-outline btn-sm">
+                Back
+              </a>
+            </div>
+  
+          </div>
         </div>
-    @endif
-    {{-- ──────────────────────────────────────────── --}}
-
-    <div class="mt-6 flex space-x-4">
-        <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-outline">
-            Edit
-        </a>
-        <a href="{{ route('expenses.index') }}" class="btn btn-outline">
-            Back
-        </a>
-    </div>
-@endsection
+  
+      </div>
+    </main>
+  </x-app-layout>
+  
