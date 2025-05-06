@@ -7,188 +7,122 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage; 
 
 class ExpenseController extends Controller
 {
     use AuthorizesRequests;
 
-    /* ---------------------------------------------------------------------
-     | 1. INDEX  (list all months)
-     * -------------------------------------------------------------------*/
     public function index()
     {
-        $userId   = auth()->id();
-        $cacheKey = "expenses_user_{$userId}";
+        $expenses = Expense::where('user_id', auth()->id())
+            ->orderBy('date', 'asc')
+            ->get()
+            ->groupBy(function ($expense) {
+                return Carbon::parse($expense->date)->format('F Y');
+            })
+            ->sortKeys();
 
-        /* 1-a  collection (per-month list) -------------------------------*/
-        $expenses = Cache::remember($cacheKey, now()->addMinutes(5), function () use ($userId) {
-            return Expense::where('user_id', $userId)
-                ->orderBy('date', 'asc')
-                ->get()
-                ->groupBy(fn ($e) => Carbon::parse($e->date)->format('F Y'))
-                ->sortKeys();
-        });
-
-        /* 1-b  per-month totals  (driver-aware!) --------------------------*/
-        $driver   = DB::getDriverName();   // "mysql" | "pgsql"
-        $monthSql = $driver === 'pgsql'
-                  ? "to_char(date, 'FMMonth YYYY')"
-                  : "DATE_FORMAT(date, '%M %Y')";
-
-        $totals = Expense::where('user_id', $userId)
-            ->selectRaw("$monthSql AS month_year, SUM(amount) AS total")
+        $totals = Expense::where('user_id', auth()->id())
+            ->selectRaw("DATE_FORMAT(date, '%M %Y') as month_year, SUM(amount) as total")
             ->groupBy('month_year')
             ->pluck('total', 'month_year');
 
         return view('expenses.index', compact('expenses', 'totals'));
     }
 
-    /* ---------------------------------------------------------------------
-     | 2. MONTHLY BREAKDOWN  (unchanged)
-     * -------------------------------------------------------------------*/
     public function showMonthlyBreakdown($month)
     {
-        $userId   = auth()->id();
-        $cacheKey = "breakdown_{$userId}_" . str_replace(' ', '_', $month);
+        // Convert month back to valid date format for comparison (e.g., May 2025 → 2025-05)
+        $dateObj = Carbon::createFromFormat('F Y', $month);
+        $start = $dateObj->startOfMonth();
+        $end = $dateObj->endOfMonth();
 
-        [$categoryBreakdown] = Cache::remember(
-            $cacheKey,
-            now()->addMinutes(5),
-            function () use ($userId, $month) {
-                $d    = Carbon::createFromFormat('F Y', $month);
-                $from = $d->startOfMonth();
-                $to   = $d->endOfMonth();
+        // Fetch expenses by category
+        $categoryBreakdown = Expense::where('user_id', auth()->id())
+            ->whereBetween('date', [$start, $end])
+            ->select('category', DB::raw('SUM(amount) as total'))
+            ->groupBy('category')
+            ->pluck('total', 'category');
 
-                return [
-                    Expense::where('user_id', $userId)
-                        ->whereBetween('date', [$from, $to])
-                        ->select('category', DB::raw('SUM(amount) as total'))
-                        ->groupBy('category')
-                        ->pluck('total', 'category'),
-                ];
-            }
-        );
-
-        return view('expenses.breakdown', [
-            'month'             => $month,
-            'categoryBreakdown' => $categoryBreakdown,
-        ]);
+        return view('expenses.breakdown', compact('month', 'categoryBreakdown'));
     }
 
-    /**
-     * Show the form for creating a new expense.
-     */
     public function create()
     {
         return view('expenses.create');
     }
 
-    /**
-     * Store a newly created expense in storage.
-     * Reads uploaded receipt into BLOB fields.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'title'   => 'required',
-            'amount'  => 'required|numeric',
-            'date'    => 'required|date',
-            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
+            'title'       => 'required',
+            'amount'      => 'required|numeric',
+            'date'        => 'required|date',
+            'receipt'     => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
         ]);
-
-        $data = $request->only(['title', 'amount', 'date', 'category', 'notes']);
+    
+        $data = $request->only(['title','amount','date','category','notes']);
         $data['user_id'] = auth()->id();
-
-        if ($file = $request->file('receipt')) {
-            $data['receipt_data'] = file_get_contents($file->getRealPath());
-            $data['receipt_mime'] = $file->getClientMimeType();
+    
+        if ($request->hasFile('receipt')) {
+            // store under storage/app/public/receipts:
+            $data['receipt_path'] = $request
+                ->file('receipt')
+                ->store('receipts','public');
         }
-
-        $expense = Expense::create($data);
-
-        Log::info('Expense created', [
-            'user_id'    => auth()->id(),
-            'expense_id' => $expense->id,
-        ]);
-
-        Cache::forget("expenses_user_".auth()->id());
-
+    
+        Expense::create($data);
+    
         return redirect()->route('expenses.index')
                          ->with('success','Expense & receipt saved!');
     }
 
-    /**
-     * Display the specified expense.
-     */
     public function show(Expense $expense)
     {
         $this->authorize('view', $expense);
         return view('expenses.show', compact('expense'));
     }
 
-    /**
-     * Show the form for editing the specified expense.
-     */
     public function edit(Expense $expense)
     {
         $this->authorize('update', $expense);
         return view('expenses.edit', compact('expense'));
     }
 
-    /**
-     * Update the specified expense in storage.
-     * If a new receipt is uploaded, overwrite the BLOB fields.
-     */
     public function update(Request $request, Expense $expense)
     {
         $this->authorize('update', $expense);
-
+    
         $request->validate([
             'title'   => 'required',
             'amount'  => 'required|numeric',
             'date'    => 'required|date',
             'receipt' => 'nullable|file|mimes:jpg,jpeg,png,gif,pdf,doc,docx|max:5120',
         ]);
-
-        $data = $request->only(['title', 'amount', 'date', 'category', 'notes']);
-
-        if ($file = $request->file('receipt')) {
-            $data['receipt_data'] = file_get_contents($file->getRealPath());
-            $data['receipt_mime'] = $file->getClientMimeType();
+    
+        $data = $request->only(['title','amount','date','category','notes']);
+    
+        if ($request->hasFile('receipt')) {
+            // delete old, if any
+            if ($expense->receipt_path) {
+                Storage::disk('public')->delete($expense->receipt_path);
+            }
+            $data['receipt_path'] = $request
+                ->file('receipt')
+                ->store('receipts','public');
         }
-
+    
         $expense->update($data);
-
-        Log::info('Expense updated', [
-            'user_id'    => auth()->id(),
-            'expense_id' => $expense->id,
-        ]);
-
-        Cache::forget("expenses_user_".auth()->id());
-
+    
         return redirect()->route('expenses.index')
                          ->with('success','Expense updated!');
     }
-
-    /**
-     * Remove the specified expense from storage.
-     */
     public function destroy(Expense $expense)
     {
         $this->authorize('delete', $expense);
-
         $expense->delete();
 
-        Log::warning('Expense deleted', [
-            'user_id'    => auth()->id(),
-            'expense_id' => $expense->id,
-        ]);
-
-        Cache::forget("expenses_user_".auth()->id());
-
-        return redirect()->route('expenses.index')
-                         ->with('success','Expense deleted!');
+        return redirect()->route('expenses.index')->with('success', 'Expense deleted!');
     }
 }
