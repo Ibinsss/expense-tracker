@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('expenses', function (Blueprint $table) {
-           
+            php artisan migrate:rollback --step=1 
             $table->binary('receipt_data')->nullable();
             $table->string('receipt_mime')->nullable();
         });

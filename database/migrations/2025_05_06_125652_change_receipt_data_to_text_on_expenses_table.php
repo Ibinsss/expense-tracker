@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 class ChangeReceiptDataToTextOnExpensesTable extends Migration
 {
-    public function up()
-    {
-        Schema::table('expenses', function (Blueprint $table) {
-            // remove whatever was there (this WILL delete existing receipt_data!)
-            $table->dropColumn('receipt_data');
+    public function up(): void
+{
+    Schema::table('expenses', function (Blueprint $table) {
+        // this line is failing because there's no "receipt_blob" column in Postgres:
+        $table->renameColumn('receipt_data_old', 'receipt_data');
         });
 
         Schema::table('expenses', function (Blueprint $table) {
