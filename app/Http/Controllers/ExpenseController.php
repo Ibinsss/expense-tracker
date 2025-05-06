@@ -70,12 +70,11 @@ class ExpenseController extends Controller
         $data['user_id'] = auth()->id();
     
         if ($request->hasFile('receipt')) {
-            // store under storage/app/public/receipts:
             $data['receipt_path'] = $request
                 ->file('receipt')
-                ->store('receipts','public');
+                ->store('receipts', 's3'); 
         }
-    
+        
         Expense::create($data);
     
         return redirect()->route('expenses.index')
@@ -108,13 +107,12 @@ class ExpenseController extends Controller
         $data = $request->only(['title','amount','date','category','notes']);
     
         if ($request->hasFile('receipt')) {
-            // delete old, if any
             if ($expense->receipt_path) {
-                Storage::disk('public')->delete($expense->receipt_path);
+                Storage::disk('s3')->delete($expense->receipt_path);
             }
             $data['receipt_path'] = $request
                 ->file('receipt')
-                ->store('receipts','public');
+                ->store('receipts', 's3');   
         }
     
         $expense->update($data);
