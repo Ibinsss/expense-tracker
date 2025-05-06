@@ -37,8 +37,12 @@ return [
    'sendgrid' => [
   'key' => env('SENDGRID_KEY'),
 ],
-'exchangerate' => [
-  'key' => env('EXCHANGE_RATE_API_KEY'),
+
+   'exchange_rate' => [
+    'key'           => env('EXCHANGE_RATE_API_KEY'),
+    'base_url'      => env('EXCHANGE_RATE_API_BASE', 'https://v6.exchangerate-api.com/v6'),
+    'base_currency' => env('EXCHANGE_RATE_DEFAULT_BASE', 'MYR'),
 ],
+
 
 ];
