@@ -23,7 +23,7 @@
               Total Spent:
               <strong>RM {{ number_format($categoryTotals->sum(),2) }}</strong>
               &nbsp;→&nbsp;
-              <strong>{{ number_format($convertedBreakdown->sum(),2) }} {{ $currency }}</strong>
+              <strong>{{ number_format($convertedTotals->sum(),2) }} {{ $currency }}</strong>
             </p>
   
             <div class="w-60 h-60 mx-auto">
