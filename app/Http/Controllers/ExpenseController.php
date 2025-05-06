@@ -18,16 +18,20 @@ class ExpenseController extends Controller
         $expenses = Expense::where('user_id', auth()->id())
             ->orderBy('date', 'asc')
             ->get()
-            ->groupBy(function ($expense) {
-                return Carbon::parse($expense->date)->format('F Y');
-            })
+            ->groupBy(fn ($e) => Carbon::parse($e->date)->format('F Y'))
             ->sortKeys();
-
+    
+        /** ───── choose the right SQL fragment for the current DB driver ───── */
+        $driver   = DB::getDriverName();      // "mysql" | "pgsql" | "sqlite" …
+        $monthSql = $driver === 'pgsql'
+                  ? "to_char(date, 'FMMonth YYYY')"    // Postgres
+                  : "DATE_FORMAT(date, '%M %Y')";      // MySQL / MariaDB
+    
         $totals = Expense::where('user_id', auth()->id())
-            ->selectRaw("DATE_FORMAT(date, '%M %Y') as month_year, SUM(amount) as total")
+            ->selectRaw("$monthSql AS month_year, SUM(amount) AS total")
             ->groupBy('month_year')
             ->pluck('total', 'month_year');
-
+    
         return view('expenses.index', compact('expenses', 'totals'));
     }
 
