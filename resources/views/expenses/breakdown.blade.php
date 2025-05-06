@@ -21,7 +21,7 @@
           <div class="card-body space-y-6 text-center">
             <p class="text-lg font-semibold text-gray-800 dark:text-gray-100">
               Total Spent:
-              <strong>RM {{ number_format($categoryBreakdown->sum(),2) }}</strong>
+              <strong>RM {{ number_format($categoryTotals->sum(),2) }}</strong>
               &nbsp;→&nbsp;
               <strong>{{ number_format($convertedBreakdown->sum(),2) }} {{ $currency }}</strong>
             </p>
