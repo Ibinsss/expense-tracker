@@ -8,9 +8,12 @@ return new class extends \Illuminate\Database\Migrations\Migration
     public function up(): void
     {
         Schema::table('expenses', function (Blueprint $table) {
-            // bytea in Postgres ‑— use binary() in Laravel
-            $table->binary('receipt_data')->nullable();
-            $table->string('receipt_mime', 100)->nullable();
+            if (! Schema::hasColumn('expenses','receipt_data')) {
+                $table->binary('receipt_data')->nullable();
+            }
+            if (! Schema::hasColumn('expenses','receipt_mime')) {
+                $table->string('receipt_mime')->nullable();
+            }
         });
     }
 
