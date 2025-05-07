@@ -21,27 +21,39 @@
         <div class="card-body space-y-6 text-center">
           <p class="text-lg font-semibold text-gray-800 dark:text-gray-100">
             Total Spent:
-            <strong>
-              RM {{ isset($categoryBreakdown) ? number_format(collect($categoryBreakdown)->sum(), 2) : '0.00' }}
-            </strong>
+            <strong>RM {{ number_format(collect($categoryBreakdown ?? [])->sum(), 2) }}</strong>
             &nbsp;→&nbsp;
-            <strong>
-              {{ isset($convertedBreakdown) ? number_format(collect($convertedBreakdown)->sum(), 2) : '0.00' }} {{ $currency ?? '' }}
-            </strong>
+            <strong>{{ number_format(collect($convertedBreakdown ?? [])->sum(), 2) }} {{ $currency ?? '' }}</strong>
           </p>
 
-          <div class="w-60 h-60 mx-auto">
-            <canvas id="categoryChart"></canvas>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-8">
+            {{-- Chart --}}
+            <div class="w-60 h-60 mx-auto sm:mx-0">
+              <canvas id="categoryChart"></canvas>
+            </div>
+
+            {{-- Legend --}}
+            @if(isset($categoryBreakdown) && count($categoryBreakdown))
+              <div class="flex flex-col gap-2 text-left text-sm text-gray-700 dark:text-gray-300">
+                @foreach($categoryBreakdown as $category => $amount)
+                  <div class="flex items-center gap-2">
+                    <span class="inline-block w-3 h-3 rounded-full"
+                          style="background-color: {{ [
+                            '#6366f1', '#f59e0b', '#10b981',
+                            '#ef4444', '#3b82f6', '#8b5cf6',
+                            '#ec4899'
+                          ][$loop->index % 7] }}"></span>
+                    <span>{{ $category }}</span>
+                  </div>
+                @endforeach
+              </div>
+            @endif
           </div>
 
-          <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <div class="flex flex-col sm:flex-row justify-center gap-4 mt-6">
             <a href="{{ route('expenses.index') }}" class="btn btn-outline btn-sm">
               ← Back to Expenses
             </a>
-             {{-- <button onclick="document.getElementById('emailModal').classList.toggle('hidden')"
-                    class="btn btn-primary btn-sm">
-              📧 Email this breakdown
-            </button>--}}
           </div>
         </div>
       </div>
@@ -84,9 +96,6 @@
     </div>
   </main>
 
-  {{-- Email Modal (optional) --}}
-  {{-- @include('expenses.partials.email-modal') --}}
-
   {{-- Chart.js --}}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
@@ -97,13 +106,13 @@
     new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: {!! isset($categoryBreakdown) ? json_encode(array_keys($categoryBreakdown->toArray())) : '[]' !!},
+        labels: {!! json_encode(array_keys($categoryBreakdown->toArray() ?? [])) !!},
         datasets: [{
-          data: {!! isset($categoryBreakdown) ? json_encode(array_values($categoryBreakdown->toArray())) : '[]' !!},
+          data: {!! json_encode(array_values($categoryBreakdown->toArray() ?? [])) !!},
           backgroundColor: [
-            'rgb(99,102,241)','rgb(245,158,11)','rgb(16,185,129)',
-            'rgb(239,68,68)','rgb(59,130,246)','rgb(139,92,246)',
-            'rgb(236,72,153)'
+            '#6366f1', '#f59e0b', '#10b981',
+            '#ef4444', '#3b82f6', '#8b5cf6',
+            '#ec4899'
           ],
           borderColor: darkMode ? '#374151' : '#ffffff',
           borderWidth: 2
@@ -113,10 +122,7 @@
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            position: 'top',
-            labels: { color: textColor, boxWidth:20, padding:16, usePointStyle:true }
-          }
+          legend: { display: false }
         }
       }
     });
