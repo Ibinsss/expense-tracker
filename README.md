@@ -21,10 +21,11 @@ Welcome! This is a simple **Expense Tracker** app built with **Laravel**. It's d
 Here’s how to set it up on your local machine.
 
 ### 1. Clone this repo
+
 ```bash
 git clone https://github.com/Ibinsss/expense-tracker.git
 cd expense-tracker
-````
+```
 
 ### 2. Install PHP dependencies
 
