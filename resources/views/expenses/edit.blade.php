@@ -20,7 +20,7 @@
               {{-- Common fields --}}
               @include('expenses.form')
   
-              {{-- Replace Receipt --}}
+              {{-- Replace Receipt 
               <div>
                 <label for="receipt" class="block text-sm font-medium mb-1">
                   Replace Receipt
@@ -38,9 +38,9 @@
                 @error('receipt')
                   <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                 @enderror
-              </div>
+              </div>--}}
   
-              {{-- Current Receipt Link --}}
+              {{-- Current Receipt Link 
               @if($expense->receipt_path)
                 <div>
                   <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
@@ -52,7 +52,7 @@
                     Download / View
                   </a>
                 </div>
-              @endif
+              @endif--}}
   
               {{-- Submit --}}
               <div class="flex justify-end">

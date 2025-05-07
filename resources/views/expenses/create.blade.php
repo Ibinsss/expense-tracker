@@ -19,7 +19,7 @@
               {{-- your existing fields --}}
               @include('expenses.form')
   
-              {{-- Receipt Upload --}}
+              {{-- Receipt Upload
               <div>
                 <label for="receipt" class="block text-sm font-medium mb-1">
                   Receipt (jpg, png, pdf, doc)
@@ -37,7 +37,7 @@
                 @error('receipt')
                   <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                 @enderror
-              </div>
+              </div> --}}
   
               {{-- Submit --}}
               <div class="flex justify-end">

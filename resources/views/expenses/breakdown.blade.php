@@ -38,10 +38,10 @@
             <a href="{{ route('expenses.index') }}" class="btn btn-outline btn-sm">
               ← Back to Expenses
             </a>
-            <button onclick="document.getElementById('emailModal').classList.toggle('hidden')"
+             {{-- <button onclick="document.getElementById('emailModal').classList.toggle('hidden')"
                     class="btn btn-primary btn-sm">
               📧 Email this breakdown
-            </button>
+            </button>--}}
           </div>
         </div>
       </div>
